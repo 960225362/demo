@@ -1,0 +1,5 @@
+/shopfrontweb/src/main/webapp/WEB-INF/view/card/head.jsp
+/shopfrontweb/src/main/webapp/WEB-INF/view/dp/dpTop.jsp
+/shopfrontweb/src/main/webapp/WEB-INF/view/dp/dpTop1.jsp
+/shopfrontweb/src/main/webapp/WEB-INF/view/include/topActivity.jsp
+/shopfrontweb/src/main/webapp/WEB-INF/view/kd/dpTop.jsp
