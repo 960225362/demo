@@ -16,7 +16,6 @@ public class UserServiceImpl implements UserService {
     private UserDao userDao;
 
     public int insert(User user) {
-        return 1;
-//        return userDao.insert(user);
+         return userDao.insert(user);
     }
 }

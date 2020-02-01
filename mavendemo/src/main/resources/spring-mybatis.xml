@@ -2,62 +2,87 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context"
-       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:tx="http://www.springframework.org/schema/tx" xmlns:aop="http://www.springframework.org/schema/aop"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                         http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
                         http://www.springframework.org/schema/context
                         http://www.springframework.org/schema/context/spring-context-3.1.xsd
                         http://www.springframework.org/schema/tx
-                        http://www.springframework.org/schema/tx/spring-tx.xsd">
+                        http://www.springframework.org/schema/tx/spring-tx.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
     <!-- 自动扫描 -->
     <context:component-scan base-package="com.huyue">
         <context:include-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
     </context:component-scan>
 
     <!-- 引入数据库配置文件 -->
-    <bean id = "propertyConfigurer"
-          class = "org.springframework.beans.factory.config.PreferencesPlaceholderConfigurer">
-        <property name = "location" value="classpath:jdbc.properties" />
+    <bean id="propertyConfigurer"
+          class="org.springframework.beans.factory.config.PreferencesPlaceholderConfigurer">
+        <property name="location" value="classpath:jdbc.properties"/>
     </bean>
 
     <!-- 连接池 -->
-    <bean id = "dataSource" class = "org.apache.commons.dbcp.BasicDataSource"
-          destroy-method = "close">
-        <property name="driverClassName" value="${jdbc.driver}" />
-        <property name="url" value="${jdbc.url}" />
-        <property name="username" value="${jdbc.username}" />
-        <property name="password" value="${jdbc.password}" />
+    <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
+          destroy-method="close">
+        <property name="driverClassName" value="${jdbc.driver}"/>
+        <property name="url" value="${jdbc.url}"/>
+        <property name="username" value="${jdbc.username}"/>
+        <property name="password" value="${jdbc.password}"/>
         <!-- 初始化连接大小 -->
-        <property name="initialSize" value="${jdbc.initialSize}" />
+        <property name="initialSize" value="${jdbc.initialSize}"/>
         <!-- 连接池最大数量 -->
         <property name="maxActive" value="${jdbc.maxActive}"/>
         <!-- 连接池最大空闲 -->
-        <property name="maxIdle" value="${jdbc.maxIdle}" />
+        <property name="maxIdle" value="${jdbc.maxIdle}"/>
         <!-- 连接池最小空闲 -->
-        <property name="minIdle" value="${jdbc.minIdle}" />
+        <property name="minIdle" value="${jdbc.minIdle}"/>
         <!-- 获取连接最大等待时间 -->
-        <property name="maxWait" value="${jdbc.maxWait}" />
+        <property name="maxWait" value="${jdbc.maxWait}"/>
     </bean>
 
     <!-- 结合Spring和Mybatis -->
-    <bean id = "sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
-        <property name="dataSource" ref="dataSource" />
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSource"/>
         <!-- 自动扫描mapping.xml文件 -->
-        <property name = "mapperLocations" value="classpath:com/huyue/mapper/*Mapper.xml" />
+        <property name="mapperLocations" value="classpath:com/huyue/mapper/*Mapper.xml"/>
     </bean>
 
     <!-- DAO接口所在包名，Spring会自动查找其下的类 -->
-    <bean class = "org.mybatis.spring.mapper.MapperScannerConfigurer">
-        <property name = "basePackage" value="com.huyue.dao" />
-        <property name = "sqlSessionFactoryBeanName" value = "sqlSessionFactory" />
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="basePackage" value="com.huyue.dao"/>
+        <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"/>
     </bean>
 
     <!-- 定义事务 -->
-    <bean id = "transactionManager"
-          class = "org.springframework.jdbc.datasource.DataSourceTransactionManager">
-        <property name = "dataSource" ref = "dataSource" />
+    <bean id="transactionManager"
+          class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource"/>
     </bean>
 
     <!-- 使用注解定义事务 -->
-    <tx:annotation-driven transaction-manager = "transactionManager" />
+    <!--<tx:annotation-driven transaction-manager = "transactionManager" />-->
+
+    <!--配置事务通知：（事务的增强）-->
+    <tx:advice id="txAdvice" transaction-manager="transactionManager">
+        <!--
+                propagation     :事务传播行为
+                isolation       :事务的隔离级别
+                read-only       :只读
+                rollback-for    :发生哪些异常回滚
+                no-rollback-for :发生哪些异常不回滚
+                timeout         :过期信息
+            -->
+        <tx:attributes>
+            <tx:method name="*" propagation="REQUIRED"/>
+            <tx:method name="save*" rollback-for="Exception"/>
+            <tx:method name="insert*" rollback-for="Exception"/>
+            <tx:method name="update*" rollback-for="Exception"/>
+            <tx:method name="get*" read-only="true"/>
+        </tx:attributes>
+    </tx:advice>
+
+    <!--配置切面-->
+    <aop:config>
+        <aop:advisor advice-ref="txAdvice" pointcut="execution(* com.huyue.service.impl.*ServiceImpl.*(..))"/>
+        <!--<aop:advisor advice-ref="txAdvice" pointcut="execution(* com.huyue.dao.*Dao.*(..))"/>-->
+    </aop:config>
 </beans>
