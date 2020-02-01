@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>首页</title>
+</head>
+<body>
+     登录成功！
+   <form th:action="@{/logout}" action="/login" method="post">
+       <input type="submit" value="退出系统"/>
+   </form>
+
+</body>
+</html>
