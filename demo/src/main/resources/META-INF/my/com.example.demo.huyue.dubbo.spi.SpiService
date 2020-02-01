@@ -1,0 +1,2 @@
+one=com.example.demo.huyue.dubbo.spi.impl.SpiServiceImplOne
+two=com.example.demo.huyue.dubbo.spi.impl.SpiServiceImplTwo
