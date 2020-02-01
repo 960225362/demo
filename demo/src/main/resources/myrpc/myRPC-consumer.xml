@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:myRPC="http://my.com/schema/myRPC"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+    http://my.com/schema/myRPC http://my.com/schema/myRPC.xsd">
+
+    <myRPC:reference id="hello" interface="com.example.demo.huyue.dubbo.rpc.Hello" />
+
+</beans>
